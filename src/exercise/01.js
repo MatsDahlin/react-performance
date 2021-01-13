@@ -20,7 +20,10 @@ function App() {
         padding: '2rem',
       }}
     >
-      <label style={{marginBottom: '1rem'}}>
+      <label
+        style={{marginBottom: '1rem'}}
+        onMouseOver={() => import('../globe')}
+      >
         <input
           type="checkbox"
           checked={showGlobe}
