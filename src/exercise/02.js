@@ -3,8 +3,8 @@
 
 import * as React from 'react'
 import {useCombobox} from '../use-combobox'
-import {getItems} from '../filter-cities'
-import {useForceRerender} from '../utils'
+import {getItems} from '../workerized-filter-cities'
+import {useForceRerender, useAsync} from '../utils'
 
 function Menu({
   items,
@@ -60,9 +60,20 @@ function App() {
   const forceRerender = useForceRerender()
   const [inputValue, setInputValue] = React.useState('')
 
-  // 🐨 wrap getItems in a call to `React.useMemo`
-  const allItems = React.useMemo(() => getItems(inputValue), [inputValue])
-  const items = allItems.slice(0, 100)
+  // const {data, error, status, run} = useAsync()
+  // React.useEffect(() => {
+  //   run(fetchPokemon(pokemonName))
+  // }, [pokemonName, run])
+  const {data, error, status, run} = useAsync()
+
+  React.useEffect(() => {
+    run(getItems(inputValue), [inputValue])
+  }, [inputValue, run])
+
+  console.log('data', data)
+
+  // const allItems = getItems(inputValue)
+  const items = data.slice(0, 100)
 
   const {
     selectedItem,
