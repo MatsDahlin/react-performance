@@ -56,7 +56,20 @@ function ListItem({
     />
   )
 }
-ListItem = React.memo(ListItem)
+const comparator = (prevProps, nextProps) => {
+  if (prevProps.highlightedIndex === prevProps.index) {
+    console.log('render')
+    return false
+  }
+  if (nextProps.highlightedIndex === nextProps.index) {
+    console.log('render')
+    return false
+  }
+
+  return true
+}
+
+ListItem = React.memo(ListItem, comparator)
 
 function App() {
   const forceRerender = useForceRerender()
