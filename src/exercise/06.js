@@ -12,6 +12,7 @@ import {
 
 const AppStateContext = React.createContext()
 const AppDispatchContext = React.createContext()
+const DogContext = React.createContext()
 
 const initialGrid = Array.from({length: 100}, () =>
   Array.from({length: 100}, () => Math.random() * 100),
@@ -31,8 +32,20 @@ function appReducer(state, action) {
   }
 }
 
+function DogProvider({children}) {
+  const [dogName, setDogName] = React.useState('')
+
+  return (
+    <DogContext.Provider value={{dogName, setDogName}}>
+      {children}
+    </DogContext.Provider>
+  )
+}
+
 function AppProvider({children}) {
   const [state, dispatch] = React.useReducer(appReducer, {
+    // 💣 remove the dogName state because we're no longer managing that
+    dogName: '',
     grid: initialGrid,
   })
   return (
@@ -99,10 +112,12 @@ function Cell({row, column}) {
 Cell = React.memo(Cell)
 
 function DogNameInput() {
-  const [dogName, setDogName] = React.useState('')
+  const {dogName, setDogName} = React.useContext(DogContext)
+  console.log('dogctx', dogName)
 
   function handleChange(event) {
     const newDogName = event.target.value
+    // 🐨 change this to call your state setter that you get from useState
     setDogName(newDogName)
   }
 
@@ -129,10 +144,12 @@ function App() {
     <div className="grid-app">
       <button onClick={forceRerender}>force rerender</button>
       <AppProvider>
-        <div>
-          <DogNameInput />
-          <Grid />
-        </div>
+        <DogProvider>
+          <div>
+            <DogNameInput />
+            <Grid />
+          </div>
+        </DogProvider>
       </AppProvider>
     </div>
   )
